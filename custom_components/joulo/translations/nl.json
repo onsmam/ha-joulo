@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Joulo instellen",
+        "description": "Voer je Joulo API-token in. Je vindt dit token onder Settings → API in je Joulo-dashboard.",
+        "data": {
+          "api_token": "API-token",
+          "widget_token": "Widget-token (optioneel)"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Ongeldig token — controleer je API-token.",
+      "cannot_connect": "Kan geen verbinding maken met de Joulo API.",
+      "unknown": "Onbekende fout."
+    },
+    "abort": {
+      "already_configured": "Joulo is al geconfigureerd."
+    }
+  }
+}

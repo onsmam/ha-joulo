@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up Joulo",
+        "description": "Enter your Joulo API token. You can find this token under Settings → API in your Joulo dashboard.",
+        "data": {
+          "api_token": "API token",
+          "widget_token": "Widget token (optional)"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid token — please check your API token.",
+      "cannot_connect": "Unable to connect to the Joulo API.",
+      "unknown": "Unknown error."
+    },
+    "abort": {
+      "already_configured": "Joulo is already configured."
+    }
+  }
+}
