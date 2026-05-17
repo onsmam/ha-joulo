@@ -16,6 +16,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.util import dt as dt_util
 
 from .const import DOMAIN
 from .coordinator import (
@@ -220,6 +221,13 @@ class JouloSensor(CoordinatorEntity, SensorEntity):
         if self.coordinator.data is None:
             return None
         try:
-            return self.entity_description.value_fn(self.coordinator.data)
+            value = self.entity_description.value_fn(self.coordinator.data)
         except (KeyError, IndexError, TypeError):
             return None
+        if (
+            value is not None
+            and isinstance(value, str)
+            and self.entity_description.device_class == SensorDeviceClass.TIMESTAMP
+        ):
+            return dt_util.parse_datetime(value)
+        return value
