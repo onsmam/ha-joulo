@@ -1,6 +1,7 @@
 """DataUpdateCoordinator for Joulo."""
 from __future__ import annotations
 
+import asyncio
 import logging
 from datetime import timedelta
 
@@ -41,9 +42,15 @@ class JouloEnergyCoordinator(DataUpdateCoordinator):
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+                    if resp.status >= 500:
+                        _LOGGER.warning("Joulo /energy HTTP %s, keeping last data", resp.status)
+                        return self.data
                     if resp.status != 200:
                         raise UpdateFailed(f"Joulo /energy HTTP {resp.status}")
                     return await resp.json()
+        except asyncio.TimeoutError:
+            _LOGGER.warning("Joulo /energy timed out, keeping last data")
+            return self.data
         except aiohttp.ClientError as err:
             raise UpdateFailed(f"Joulo /energy connection error: {err}") from err
 
@@ -66,9 +73,15 @@ class JouloSessionsCoordinator(DataUpdateCoordinator):
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+                    if resp.status >= 500:
+                        _LOGGER.warning("Joulo /sessions HTTP %s, keeping last data", resp.status)
+                        return self.data
                     if resp.status != 200:
                         raise UpdateFailed(f"Joulo /sessions HTTP {resp.status}")
                     return await resp.json()
+        except asyncio.TimeoutError:
+            _LOGGER.warning("Joulo /sessions timed out, keeping last data")
+            return self.data
         except aiohttp.ClientError as err:
             raise UpdateFailed(f"Joulo /sessions connection error: {err}") from err
 
@@ -90,8 +103,14 @@ class JouloWidgetCoordinator(DataUpdateCoordinator):
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(url, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+                    if resp.status >= 500:
+                        _LOGGER.warning("Joulo /widget-badge HTTP %s, keeping last data", resp.status)
+                        return self.data
                     if resp.status != 200:
                         raise UpdateFailed(f"Joulo /widget-badge HTTP {resp.status}")
                     return await resp.json()
+        except asyncio.TimeoutError:
+            _LOGGER.warning("Joulo /widget-badge timed out, keeping last data")
+            return self.data
         except aiohttp.ClientError as err:
             raise UpdateFailed(f"Joulo /widget-badge connection error: {err}") from err
