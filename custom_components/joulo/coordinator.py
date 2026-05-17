@@ -1,6 +1,7 @@
 """DataUpdateCoordinator for Joulo."""
 from __future__ import annotations
 
+import asyncio
 import logging
 from datetime import timedelta
 
@@ -47,6 +48,9 @@ class JouloEnergyCoordinator(DataUpdateCoordinator):
                     if resp.status != 200:
                         raise UpdateFailed(f"Joulo /energy HTTP {resp.status}")
                     return await resp.json()
+        except asyncio.TimeoutError:
+            _LOGGER.warning("Joulo /energy timed out, keeping last data")
+            return self.data
         except aiohttp.ClientError as err:
             raise UpdateFailed(f"Joulo /energy connection error: {err}") from err
 
@@ -75,6 +79,9 @@ class JouloSessionsCoordinator(DataUpdateCoordinator):
                     if resp.status != 200:
                         raise UpdateFailed(f"Joulo /sessions HTTP {resp.status}")
                     return await resp.json()
+        except asyncio.TimeoutError:
+            _LOGGER.warning("Joulo /sessions timed out, keeping last data")
+            return self.data
         except aiohttp.ClientError as err:
             raise UpdateFailed(f"Joulo /sessions connection error: {err}") from err
 
@@ -102,5 +109,8 @@ class JouloWidgetCoordinator(DataUpdateCoordinator):
                     if resp.status != 200:
                         raise UpdateFailed(f"Joulo /widget-badge HTTP {resp.status}")
                     return await resp.json()
+        except asyncio.TimeoutError:
+            _LOGGER.warning("Joulo /widget-badge timed out, keeping last data")
+            return self.data
         except aiohttp.ClientError as err:
             raise UpdateFailed(f"Joulo /widget-badge connection error: {err}") from err
