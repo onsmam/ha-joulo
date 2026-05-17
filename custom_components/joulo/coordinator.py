@@ -41,6 +41,9 @@ class JouloEnergyCoordinator(DataUpdateCoordinator):
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+                    if resp.status >= 500:
+                        _LOGGER.warning("Joulo /energy HTTP %s, keeping last data", resp.status)
+                        return self.data
                     if resp.status != 200:
                         raise UpdateFailed(f"Joulo /energy HTTP {resp.status}")
                     return await resp.json()
@@ -66,6 +69,9 @@ class JouloSessionsCoordinator(DataUpdateCoordinator):
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+                    if resp.status >= 500:
+                        _LOGGER.warning("Joulo /sessions HTTP %s, keeping last data", resp.status)
+                        return self.data
                     if resp.status != 200:
                         raise UpdateFailed(f"Joulo /sessions HTTP {resp.status}")
                     return await resp.json()
@@ -90,6 +96,9 @@ class JouloWidgetCoordinator(DataUpdateCoordinator):
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(url, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+                    if resp.status >= 500:
+                        _LOGGER.warning("Joulo /widget-badge HTTP %s, keeping last data", resp.status)
+                        return self.data
                     if resp.status != 200:
                         raise UpdateFailed(f"Joulo /widget-badge HTTP {resp.status}")
                     return await resp.json()
