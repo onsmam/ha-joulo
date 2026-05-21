@@ -16,7 +16,8 @@
       "unknown": "Onbekende fout."
     },
     "abort": {
-      "already_configured": "Joulo is al geconfigureerd."
+      "already_configured": "Joulo is al geconfigureerd.",
+      "reauth_successful": "Authenticatie succesvol vernieuwd."
     }
   }
 }

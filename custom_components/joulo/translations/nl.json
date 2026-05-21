@@ -16,7 +16,19 @@
       "unknown": "Onbekende fout."
     },
     "abort": {
-      "already_configured": "Joulo is al geconfigureerd."
+      "already_configured": "Joulo is al geconfigureerd.",
+      "reauth_successful": "Authenticatie succesvol vernieuwd."
+    }
+  },
+  "reauth": {
+    "step": {
+      "reauth_confirm": {
+        "title": "Joulo opnieuw authenticeren",
+        "description": "Je Joulo API-token is verlopen of gewijzigd. Voer een nieuw token in.",
+        "data": {
+          "api_token": "API-token"
+        }
+      }
     }
   }
 }
