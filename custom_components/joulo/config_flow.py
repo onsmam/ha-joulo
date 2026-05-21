@@ -16,6 +16,8 @@ from .const import (
     WIDGET_BASE,
 )
 
+REAUTH_SCHEMA = vol.Schema({vol.Required(CONF_API_TOKEN): str})
+
 
 async def _validate_api_token(hass: HomeAssistant, token: str) -> str | None:
     """Return None on success, or an error key string on failure."""
@@ -84,5 +86,32 @@ class JouloConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="user",
             data_schema=schema,
+            errors=errors,
+        )
+
+    async def async_step_reauth(self, entry_data: dict) -> FlowResult:
+        """Handle re-authentication."""
+        return await self.async_step_reauth_confirm()
+
+    async def async_step_reauth_confirm(self, user_input: dict | None = None) -> FlowResult:
+        """Handle re-auth confirmation form."""
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            error = await _validate_api_token(self.hass, user_input[CONF_API_TOKEN])
+            if error:
+                errors["base"] = error
+            else:
+                entry = self.hass.config_entries.async_get_entry(self.context["entry_id"])
+                self.hass.config_entries.async_update_entry(
+                    entry,
+                    data={**entry.data, CONF_API_TOKEN: user_input[CONF_API_TOKEN]},
+                )
+                await self.hass.config_entries.async_reload(entry.entry_id)
+                return self.async_abort(reason="reauth_successful")
+
+        return self.async_show_form(
+            step_id="reauth_confirm",
+            data_schema=REAUTH_SCHEMA,
             errors=errors,
         )

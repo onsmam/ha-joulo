@@ -16,7 +16,19 @@
       "unknown": "Unknown error."
     },
     "abort": {
-      "already_configured": "Joulo is already configured."
+      "already_configured": "Joulo is already configured.",
+      "reauth_successful": "Re-authentication was successful."
+    }
+  },
+  "reauth": {
+    "step": {
+      "reauth_confirm": {
+        "title": "Re-authenticate Joulo",
+        "description": "Your Joulo API token has expired or changed. Please enter a new token.",
+        "data": {
+          "api_token": "API token"
+        }
+      }
     }
   }
 }

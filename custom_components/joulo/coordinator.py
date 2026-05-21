@@ -8,6 +8,7 @@ from datetime import timedelta
 import aiohttp
 
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
@@ -42,6 +43,8 @@ class JouloEnergyCoordinator(DataUpdateCoordinator):
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+                    if resp.status == 401:
+                        raise ConfigEntryAuthFailed("Authenticatie verlopen of gewijzigd. API key/token voor Joulo energy vernieuwen.")
                     if resp.status >= 500:
                         _LOGGER.warning("Joulo /energy HTTP %s, keeping last data", resp.status)
                         return self.data
@@ -73,6 +76,8 @@ class JouloSessionsCoordinator(DataUpdateCoordinator):
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+                    if resp.status == 401:
+                        raise ConfigEntryAuthFailed("Authenticatie verlopen of gewijzigd. API key/token voor Joulo sessions vernieuwen.")
                     if resp.status >= 500:
                         _LOGGER.warning("Joulo /sessions HTTP %s, keeping last data", resp.status)
                         return self.data
