@@ -66,7 +66,7 @@ SESSIONS_SENSORS: tuple[JouloSensorEntityDescription, ...] = (
         name="Laatste sessie kWh",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
-        state_class=SensorStateClass.MEASUREMENT,
+        state_class=SensorStateClass.TOTAL,
         value_fn=lambda d: d["sessions"][0]["kwh"] if d.get("sessions") else None,
     ),
     JouloSensorEntityDescription(
@@ -116,7 +116,7 @@ WIDGET_SENSORS: tuple[JouloSensorEntityDescription, ...] = (
         name="Verdiensten laag tarief",
         native_unit_of_measurement="EUR",
         device_class=SensorDeviceClass.MONETARY,
-        state_class=SensorStateClass.TOTAL_INCREASING,
+        state_class=SensorStateClass.TOTAL,
         value_fn=lambda d: d.get("earnings_low"),
     ),
     JouloSensorEntityDescription(
@@ -124,7 +124,7 @@ WIDGET_SENSORS: tuple[JouloSensorEntityDescription, ...] = (
         name="Verdiensten midden tarief",
         native_unit_of_measurement="EUR",
         device_class=SensorDeviceClass.MONETARY,
-        state_class=SensorStateClass.TOTAL_INCREASING,
+        state_class=SensorStateClass.TOTAL,
         value_fn=lambda d: d.get("earnings_mid"),
     ),
     JouloSensorEntityDescription(
@@ -132,7 +132,7 @@ WIDGET_SENSORS: tuple[JouloSensorEntityDescription, ...] = (
         name="Verdiensten hoog tarief",
         native_unit_of_measurement="EUR",
         device_class=SensorDeviceClass.MONETARY,
-        state_class=SensorStateClass.TOTAL_INCREASING,
+        state_class=SensorStateClass.TOTAL,
         value_fn=lambda d: d.get("earnings_high"),
     ),
     JouloSensorEntityDescription(
