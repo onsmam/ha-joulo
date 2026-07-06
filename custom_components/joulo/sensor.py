@@ -20,6 +20,7 @@ from homeassistant.util import dt as dt_util
 
 from .const import DOMAIN
 from .coordinator import (
+    JouloEREPositionCoordinator,
     JouloEnergyCoordinator,
     JouloSessionsCoordinator,
     JouloWidgetCoordinator,
@@ -92,6 +93,106 @@ SESSIONS_SENSORS: tuple[JouloSensorEntityDescription, ...] = (
         key="last_session_charger",
         name="Laatste sessie laadpaal",
         value_fn=lambda d: d["sessions"][0].get("charger_nickname") if d.get("sessions") else None,
+    ),
+)
+
+ERE_POSITION_SENSORS: tuple[JouloSensorEntityDescription, ...] = (
+    JouloSensorEntityDescription(
+        key="ere_total_expected_eur",
+        name="ERE verwachte jaaropbrengst",
+        native_unit_of_measurement="EUR",
+        device_class=SensorDeviceClass.MONETARY,
+        state_class=SensorStateClass.TOTAL,
+        value_fn=lambda d: d.get("total_expected_eur"),
+    ),
+    JouloSensorEntityDescription(
+        key="ere_ytd_expected_eur",
+        name="ERE opbrengst dit jaar",
+        native_unit_of_measurement="EUR",
+        device_class=SensorDeviceClass.MONETARY,
+        state_class=SensorStateClass.TOTAL,
+        value_fn=lambda d: d.get("ytd_expected_eur"),
+    ),
+    JouloSensorEntityDescription(
+        key="ere_future_forecast_eur",
+        name="ERE prognose rest jaar",
+        native_unit_of_measurement="EUR",
+        device_class=SensorDeviceClass.MONETARY,
+        state_class=SensorStateClass.TOTAL,
+        value_fn=lambda d: d.get("unsold", {}).get("future_forecast_net_eur"),
+    ),
+    JouloSensorEntityDescription(
+        key="ere_paid_eur",
+        name="ERE uitbetaald",
+        native_unit_of_measurement="EUR",
+        device_class=SensorDeviceClass.MONETARY,
+        state_class=SensorStateClass.TOTAL,
+        value_fn=lambda d: d.get("paid", {}).get("net_eur"),
+    ),
+    JouloSensorEntityDescription(
+        key="ere_paid_credits",
+        name="ERE uitbetaald credits",
+        native_unit_of_measurement="ERE",
+        state_class=SensorStateClass.TOTAL,
+        value_fn=lambda d: d.get("paid", {}).get("ere"),
+    ),
+    JouloSensorEntityDescription(
+        key="ere_payable_eur",
+        name="ERE klaar voor uitbetaling",
+        native_unit_of_measurement="EUR",
+        device_class=SensorDeviceClass.MONETARY,
+        state_class=SensorStateClass.TOTAL,
+        value_fn=lambda d: d.get("payable", {}).get("net_eur"),
+    ),
+    JouloSensorEntityDescription(
+        key="ere_payable_credits",
+        name="ERE klaar voor uitbetaling credits",
+        native_unit_of_measurement="ERE",
+        state_class=SensorStateClass.TOTAL,
+        value_fn=lambda d: d.get("payable", {}).get("ere"),
+    ),
+    JouloSensorEntityDescription(
+        key="ere_reserved_eur",
+        name="ERE gereserveerd",
+        native_unit_of_measurement="EUR",
+        device_class=SensorDeviceClass.MONETARY,
+        state_class=SensorStateClass.TOTAL,
+        value_fn=lambda d: d.get("reserved", {}).get("net_eur"),
+    ),
+    JouloSensorEntityDescription(
+        key="ere_reserved_credits",
+        name="ERE gereserveerd credits",
+        native_unit_of_measurement="ERE",
+        state_class=SensorStateClass.TOTAL,
+        value_fn=lambda d: d.get("reserved", {}).get("ere"),
+    ),
+    JouloSensorEntityDescription(
+        key="ere_reserved_price_per_ere",
+        name="ERE gereserveerd prijs",
+        native_unit_of_measurement="EUR/ERE",
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda d: d.get("reserved", {}).get("price_per_ere"),
+    ),
+    JouloSensorEntityDescription(
+        key="ere_unsold_credits",
+        name="ERE nog te verkopen",
+        native_unit_of_measurement="ERE",
+        state_class=SensorStateClass.TOTAL,
+        value_fn=lambda d: d.get("unsold", {}).get("ytd_ere"),
+    ),
+    JouloSensorEntityDescription(
+        key="ere_indicative_price",
+        name="ERE indicatieve prijs",
+        native_unit_of_measurement="EUR/ERE",
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda d: d.get("indicative_price_per_ere"),
+    ),
+    JouloSensorEntityDescription(
+        key="ere_effective_fee_pct",
+        name="ERE commissie",
+        native_unit_of_measurement="%",
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda d: d.get("effective_fee_pct"),
     ),
 )
 
@@ -179,6 +280,10 @@ async def async_setup_entry(
     sessions_coord: JouloSessionsCoordinator = data["sessions"]
     for desc in SESSIONS_SENSORS:
         entities.append(JouloSensor(sessions_coord, desc, entry.entry_id))
+
+    ere_position_coord: JouloEREPositionCoordinator = data["ere_position"]
+    for desc in ERE_POSITION_SENSORS:
+        entities.append(JouloSensor(ere_position_coord, desc, entry.entry_id))
 
     if "widget" in data:
         widget_coord: JouloWidgetCoordinator = data["widget"]

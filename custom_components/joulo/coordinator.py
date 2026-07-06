@@ -17,6 +17,7 @@ from .const import (
     CONF_WIDGET_TOKEN,
     DOMAIN,
     SCAN_INTERVAL_ENERGY,
+    SCAN_INTERVAL_ERE_POSITION,
     SCAN_INTERVAL_SESSIONS,
     SCAN_INTERVAL_WIDGET,
     WIDGET_BASE,
@@ -89,6 +90,39 @@ class JouloSessionsCoordinator(DataUpdateCoordinator):
             return self.data
         except aiohttp.ClientError as err:
             raise UpdateFailed(f"Joulo /sessions connection error: {err}") from err
+
+
+class JouloEREPositionCoordinator(DataUpdateCoordinator):
+    """Coordinator for /ere-position endpoint."""
+
+    def __init__(self, hass: HomeAssistant, token: str) -> None:
+        super().__init__(
+            hass,
+            _LOGGER,
+            name=f"{DOMAIN}_ere_position",
+            update_interval=timedelta(seconds=SCAN_INTERVAL_ERE_POSITION),
+        )
+        self._token = token
+
+    async def _async_update_data(self) -> dict:
+        url = f"{API_BASE}/ere-position"
+        headers = {"Authorization": f"Bearer {self._token}"}
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+                    if resp.status == 401:
+                        raise ConfigEntryAuthFailed("Authenticatie verlopen of gewijzigd. API key/token voor Joulo vernieuwen.")
+                    if resp.status >= 500:
+                        _LOGGER.warning("Joulo /ere-position HTTP %s, keeping last data", resp.status)
+                        return self.data
+                    if resp.status != 200:
+                        raise UpdateFailed(f"Joulo /ere-position HTTP {resp.status}")
+                    return await resp.json()
+        except asyncio.TimeoutError:
+            _LOGGER.warning("Joulo /ere-position timed out, keeping last data")
+            return self.data
+        except aiohttp.ClientError as err:
+            raise UpdateFailed(f"Joulo /ere-position connection error: {err}") from err
 
 
 class JouloWidgetCoordinator(DataUpdateCoordinator):
