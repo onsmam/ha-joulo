@@ -57,6 +57,9 @@ Vereist een apart widget-token.
 
 ## Installatie via HACS
 
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=onsmam&repository=ha-joulo&category=integration)
+
+Of handmatig:
 1. HACS → Integraties → ⋮ → Aangepaste repositories
 2. URL: `https://github.com/onsmam/ha-joulo` → categorie: **Integration**
 3. Zoek op **Joulo** → Downloaden
@@ -64,6 +67,9 @@ Vereist een apart widget-token.
 
 ## Configuratie
 
+[![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=joulo)
+
+Of handmatig:
 1. Instellingen → Apparaten & diensten → Integratie toevoegen → **Joulo**
 2. Voer je API-token in (Joulo dashboard → Settings → API)
 3. Optioneel: widget-token voor extra verdienstensensoren
