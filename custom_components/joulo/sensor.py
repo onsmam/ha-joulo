@@ -229,11 +229,25 @@ WIDGET_SENSORS: tuple[JouloSensorEntityDescription, ...] = (
         value_fn=lambda d: d.get("co2_saved_kg"),
     ),
     JouloSensorEntityDescription(
+        key="ere_price_low",
+        name="ERE prijs laag",
+        native_unit_of_measurement="EUR/credit",
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda d: d.get("ere_price_low"),
+    ),
+    JouloSensorEntityDescription(
         key="ere_price_mid",
         name="ERE prijs midden",
         native_unit_of_measurement="EUR/credit",
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda d: d.get("ere_price_mid"),
+    ),
+    JouloSensorEntityDescription(
+        key="ere_price_high",
+        name="ERE prijs hoog",
+        native_unit_of_measurement="EUR/credit",
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda d: d.get("ere_price_high"),
     ),
 )
 
