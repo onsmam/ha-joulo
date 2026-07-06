@@ -198,21 +198,6 @@ ERE_POSITION_SENSORS: tuple[JouloSensorEntityDescription, ...] = (
 
 WIDGET_SENSORS: tuple[JouloSensorEntityDescription, ...] = (
     JouloSensorEntityDescription(
-        key="widget_total_kwh",
-        name="Widget totaal kWh",
-        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
-        device_class=SensorDeviceClass.ENERGY,
-        state_class=SensorStateClass.TOTAL_INCREASING,
-        value_fn=lambda d: d.get("total_kwh"),
-    ),
-    JouloSensorEntityDescription(
-        key="widget_total_ere",
-        name="Widget totale ERE",
-        native_unit_of_measurement="credits",
-        state_class=SensorStateClass.TOTAL_INCREASING,
-        value_fn=lambda d: d.get("total_ere"),
-    ),
-    JouloSensorEntityDescription(
         key="earnings_low",
         name="Verdiensten laag tarief",
         native_unit_of_measurement="EUR",
@@ -242,13 +227,6 @@ WIDGET_SENSORS: tuple[JouloSensorEntityDescription, ...] = (
         native_unit_of_measurement="kg",
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=lambda d: d.get("co2_saved_kg"),
-    ),
-    JouloSensorEntityDescription(
-        key="effective_fee_pct",
-        name="Effectieve vergoeding",
-        native_unit_of_measurement="%",
-        state_class=SensorStateClass.MEASUREMENT,
-        value_fn=lambda d: d.get("effective_fee_pct"),
     ),
     JouloSensorEntityDescription(
         key="ere_price_mid",
